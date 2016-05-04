@@ -1,0 +1,42 @@
+---
+type: library
+name: zurborg/log-radis
+version: 1.0.0
+
+description: Radis Logging Engine for PHP
+homepage: https://github.com/zurborg/liblog-radis-php
+license: ISC
+keywords:
+  - log
+  - logging
+  - redis
+  - graylog
+  - gelf
+
+authors:
+  - name: David Zurborg
+    email: zurborg@cpan.org
+    homepage: https://zurborg.github.io/
+
+require:
+  php: '>=5.5'
+  ext-redis: '>=2.2.5'
+
+require-dev:
+  evert/phpdoc-md: '~0.2.0'
+  phpdocumentor/phpdocumentor: '2.*'
+
+autoload:
+  psr-4:
+    Log\: src/
+
+archive:
+  exclude:
+    - '.*'
+    - '*~'
+    - vendor/
+    - docs/
+    - Makefile
+    - composer.lock
+    - composer.phar
+    - composer.yaml
