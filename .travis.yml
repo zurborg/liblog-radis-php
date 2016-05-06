@@ -13,4 +13,4 @@ install:
   - composer install
 
 script:
-  - phpunit test
+  - phpunit --colors=auto test
