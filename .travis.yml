@@ -6,9 +6,9 @@ php:
   - hhvm
   - nightly
 
+before_install:
+  - phpenv config-add travis-php.ini
+
 install:
   - composer install
-
-before_script:
-  - phpenv config-add travis-php.ini
 
