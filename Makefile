@@ -1,7 +1,7 @@
 php=`which php`
 perl=`which perl`
 composer=$(php) composer.phar
-phpunit=$(php) phpunit.phar
+phpunit=$(php) vendor/phpunit/phpunit/phpunit
 phpdoc=$(php) vendor/phpdocumentor/phpdocumentor/bin/phpdoc
 phpdocmd=$(php) vendor/evert/phpdoc-md/bin/phpdocmd
 yaml2json=$(perl) -MJSON -MYAML -eprint -e'encode_json(YAML::Load(join""=><>))'
@@ -28,7 +28,6 @@ clean:
 
 prepare: composer.json
 	curl -L https://getcomposer.org/composer.phar -z composer.phar -o composer.phar
-	curl -L https://phar.phpunit.de/phpunit.phar  -z  phpunit.phar -o  phpunit.phar
 	$(composer) install
 
 composer.json: composer.yaml
@@ -38,7 +37,7 @@ composer.json: composer.yaml
 	git add $@
 
 test:
-	$(phpunit) test/*.php
+	$(phpunit) --verbose test
 
 archive: | clean composer.json
 	$(composer) archive

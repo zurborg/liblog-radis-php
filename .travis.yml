@@ -13,4 +13,4 @@ install:
   - composer install
 
 script:
-  - phpunit --colors=auto test
+  - vendor/phpunit/phpunit/phpunit --colors=auto test
