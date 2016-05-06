@@ -19,14 +19,15 @@ authors:
     homepage: https://zurborg.github.io/
 
 require:
-  php: '>=5.5'
+  php: '~7'
   ext-redis: '~2.2'
 
 require-dev:
-  php: '>=5.6'
   phpunit/phpunit: '5.3.*'
   evert/phpdoc-md: '~0.2.0'
   phpdocumentor/phpdocumentor: '2.*'
+
+minimum-stability: dev
 
 autoload:
   psr-4:
