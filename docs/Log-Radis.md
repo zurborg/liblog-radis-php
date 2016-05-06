@@ -54,7 +54,7 @@ Methods
 
 ### __construct
 
-    mixed Log\Radis::__construct(string $server, string $queue)
+    mixed Log\Radis::__construct(string $server, string $queue, \Log\Redis $redis)
 
 Connnects to a Redis DB
 
@@ -69,6 +69,7 @@ $radis = new \Log\Radis('localhost:6379', 'graylog-radis');
 #### Arguments
 * $server **string** - &lt;p&gt;Name of the Redis server, in format &lt;em&gt;hostname&lt;/em&gt;:&lt;em&gt;port&lt;/em&gt;&lt;/p&gt;
 * $queue **string** - &lt;p&gt;Name of the queue&lt;/p&gt;
+* $redis **Log\Redis** - &lt;p&gt;@internal&lt;/p&gt;
 
 
 
