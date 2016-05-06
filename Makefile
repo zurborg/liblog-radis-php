@@ -8,7 +8,7 @@ yaml2json=$(perl) -MJSON -MYAML -eprint -e'encode_json(YAML::Load(join""=><>))'
 getversion=$(perl) -MYAML -eprint -e'YAML::Load(join""=><>)->{version}'
 V=`$(getversion) < composer.yaml`
 
-all: | composer.json test documentation
+all: | vendor test documentation
 
 info:
 	@echo $(php)
@@ -26,7 +26,7 @@ documentation:
 clean:
 	git clean -xdf -e composer.phar -e vendor
 
-prepare: composer.json
+vendor: composer.json
 	curl -L https://getcomposer.org/composer.phar -z composer.phar -o composer.phar
 	$(composer) install
 
@@ -47,4 +47,4 @@ release:
 	git tag -m "Release version $V" -s v$V
 	git push --tags
 
-.PHONY: all info documentation clean prepare test archive release
+.PHONY: all info documentation clean test archive release
