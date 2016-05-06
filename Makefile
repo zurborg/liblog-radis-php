@@ -32,8 +32,9 @@ prepare: composer.json
 	$(composer) install
 
 composer.json: composer.yaml
-	$(yaml2json) < $< > $@
-	rm composer.lock
+	$(yaml2json) < $< > $@~
+	mv $@~ $@
+	-rm composer.lock
 	git add $@
 
 test:
@@ -46,3 +47,5 @@ release:
 	git push --all
 	git tag -m "Release version $V" -s v$V
 	git push --tags
+
+.PHONY: all info documentation clean prepare test archive release
