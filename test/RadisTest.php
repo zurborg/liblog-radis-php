@@ -93,7 +93,7 @@ class RadisTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $i);
         $msg = $this->lastMessage();
         $this->assertEquals('bar', $msg['_foo']);
-        $this->assertEquals(null, $msg['_null']);
+        $this->assertArrayNotHasKey('_null', $msg);
         $this->assertEquals(2, $msg['_func']);
     }
 }
