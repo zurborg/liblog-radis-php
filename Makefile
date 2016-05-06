@@ -17,7 +17,7 @@ info:
 	@$(perl) -v
 
 documentation:
-	-git rm -rf docs/
+	-git rm -f --cached docs/*.md
 	$(phpdoc) -d src/ -t docs/ --template=xml --visibility=public
 	$(phpdocmd) docs/structure.xml docs/
 	git add docs/*.md
