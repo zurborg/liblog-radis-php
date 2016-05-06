@@ -20,7 +20,7 @@ authors:
 
 require:
   php: '>=5.5'
-  ext-redis: '>=2.2.5'
+  ext-redis: '>=2.2'
 
 require-dev:
   php: '>=5.6'
