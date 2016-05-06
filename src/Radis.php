@@ -93,7 +93,7 @@ class Radis extends \Psr\Log\AbstractLogger
      * @see \Redis::pconnect()
      * @param string $server Name of the Redis server, in format *hostname*:*port*
      * @param string $queue Name of the queue
-     * @param Redis $redis @internal
+     * @param Redis $redis Instance of Redis, for internal use only
      */
     public function __construct($server = 'localhost:6379', $queue = 'graylog-radis', $redis = null)
     {

@@ -69,7 +69,7 @@ $radis = new \Log\Radis('localhost:6379', 'graylog-radis');
 #### Arguments
 * $server **string** - &lt;p&gt;Name of the Redis server, in format &lt;em&gt;hostname&lt;/em&gt;:&lt;em&gt;port&lt;/em&gt;&lt;/p&gt;
 * $queue **string** - &lt;p&gt;Name of the queue&lt;/p&gt;
-* $redis **Log\Redis** - &lt;p&gt;@internal&lt;/p&gt;
+* $redis **Log\Redis** - &lt;p&gt;Instance of Redis, for internal use only&lt;/p&gt;
 
 
 
