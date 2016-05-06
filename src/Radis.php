@@ -79,15 +79,8 @@ class Radis extends \Psr\Log\AbstractLogger
 
     /**
      * @internal
-     * @var bool
      */
-    public $testMode = false;
-
-    /**
-     * @internal
-     * @var string
-     */
-    public $lastGELF;
+    private $queue;
 
     /**
      * Connnects to a Redis DB
@@ -100,16 +93,18 @@ class Radis extends \Psr\Log\AbstractLogger
      * @see \Redis::pconnect()
      * @param string $server Name of the Redis server, in format *hostname*:*port*
      * @param string $queue Name of the queue
+     * @param Redis $redis @internal
      */
-    public function __construct($server = 'localhost:6379', $queue = 'graylog-radis')
+    public function __construct($server = 'localhost:6379', $queue = 'graylog-radis', $redis = null)
     {
-        $redis = new \Redis();
+        if (is_null($redis))
+            $redis = new \Redis();
 
         list($host, $port) = explode(':', $server, 2);
         if (!$host) $host = 'localhost';
         if (!$port) $port = 6379;
         if (!$redis->pconnect($host, $port)) {
-            die("cannot connect to $host:$port");
+            throw new \Exception("Cannot connect to $host:$port");
         }
         $this->server = $server;
         $this->queue = $queue;
@@ -147,7 +142,7 @@ class Radis extends \Psr\Log\AbstractLogger
      */
     public function fork($queue)
     {
-        return new Radis($this->server, $queue);
+        return new Radis($this->server, $queue, $this->redis);
     }
 
     /**
@@ -331,12 +326,6 @@ class Radis extends \Psr\Log\AbstractLogger
     public function log($level, $message, array $context = [])
     {
         $gelf = $this->prepare($level, $message, $context);
-
-        if ($this->testMode)
-        {
-            $this->lastGELF = $gelf;
-            return true;
-        }
 
         $gelf = json_encode($gelf);
 
