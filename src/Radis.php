@@ -62,14 +62,21 @@ class Radis extends \Psr\Log\AbstractLogger
      * @var int[]
      */
     protected $levels = [
+        'fatal'     => 1,
+        'emerg'     => 1,
         'emergency' => 1,
         'alert'     => 2,
+        'crit'      => 3,
         'critical'  => 3,
         'error'     => 4,
+        'warn'      => 5,
         'warning'   => 5,
+        'note'      => 6,
         'notice'    => 6,
         'info'      => 7,
         'debug'     => 8,
+        'trace'     => 9,
+        'core'      => 9,
     ];
 
     /**
