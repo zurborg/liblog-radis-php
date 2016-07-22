@@ -146,7 +146,7 @@ These keywords are set by default, when not present:
 | host             | `gethostname()` |
 | timestamp        | `sprintf('%0.06', microtime(true))` |
 | level            | `$level` |
-| short_message    | `$message` |
+| message          | `$message` |
 | _time_offset     | `sprintf('%0.06', microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])` |
 | _php_script      | `$_SERVER['SCRIPT_FILENAME']` |
 | _http_query      | `$_SERVER['QUERY_STRING']` |
