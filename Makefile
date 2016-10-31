@@ -28,7 +28,7 @@ clean:
 
 vendor: composer.json
 	curl -L https://getcomposer.org/composer.phar -z composer.phar -o composer.phar
-	$(composer) install
+	$(composer) --prefer-dist install
 
 composer.json: composer.yaml
 	$(yaml2json) < $< > $@~
