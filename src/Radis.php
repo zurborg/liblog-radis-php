@@ -62,14 +62,21 @@ class Radis extends \Psr\Log\AbstractLogger
      * @var int[]
      */
     protected $levels = [
+        'fatal'     => 1,
+        'emerg'     => 1,
         'emergency' => 1,
         'alert'     => 2,
+        'crit'      => 3,
         'critical'  => 3,
         'error'     => 4,
+        'warn'      => 5,
         'warning'   => 5,
+        'note'      => 6,
         'notice'    => 6,
         'info'      => 7,
         'debug'     => 8,
+        'trace'     => 9,
+        'core'      => 9,
     ];
 
     /**
@@ -262,14 +269,14 @@ class Radis extends \Psr\Log\AbstractLogger
         if (strstr($message, "\n"))
         {
             list($short_message, $long_message) = explode("\n", $message, 2);
-            $extras['message'] = $long_message;
+            $extras['full_message'] = $long_message;
             $message = $short_message;
         }
 
         $gelf = array_merge($extras, [
             'host' => $this->hostname,
             'timestamp' => sprintf('%0.06f', $now),
-            'short_message' => $message,
+            'message' => $message,
             'level' => $level,
         ]);
         
@@ -297,7 +304,7 @@ class Radis extends \Psr\Log\AbstractLogger
      * | host             | `gethostname()` |
      * | timestamp        | `sprintf('%0.06', microtime(true))` |
      * | level            | `$level` |
-     * | short_message    | `$message` |
+     * | message          | `$message` |
      * | _time_offset     | `sprintf('%0.06', microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'])` |
      * | _php_script      | `$_SERVER['SCRIPT_FILENAME']` |
      * | _http_query      | `$_SERVER['QUERY_STRING']` |
