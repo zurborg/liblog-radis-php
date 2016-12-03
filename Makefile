@@ -1,6 +1,7 @@
-php=`which php`
-perl=`which perl`
+php=php
+perl=perl
 composer=$(php) composer.phar
+phpcs=$(php) vendor/squizlabs/php_codesniffer/scripts/phpcs
 phpunit=$(php) vendor/phpunit/phpunit/phpunit
 phpdoc=$(php) vendor/phpdocumentor/phpdocumentor/bin/phpdoc
 phpdocmd=$(php) vendor/evert/phpdoc-md/bin/phpdocmd
@@ -18,8 +19,8 @@ info:
 
 documentation:
 	-git rm -f --cached docs/*.md
-	$(phpdoc) -d src/ -t docs/ --template=xml --visibility=public
-	$(phpdocmd) docs/structure.xml docs/
+	$(phpdoc) -d src/ -t docs/ --template=xml --visibility=public >phpdoc.out
+	$(phpdocmd) docs/structure.xml docs/ > phpdocmd.out
 	git add docs/*.md
 	git clean -xdf docs/
 
@@ -27,8 +28,7 @@ clean:
 	git clean -xdf -e composer.phar -e vendor
 
 vendor: composer.json
-	curl -L https://getcomposer.org/composer.phar -z composer.phar -o composer.phar
-	$(composer) --prefer-dist install
+	$(composer) --prefer-dist install >composer.out
 
 composer.json: composer.yaml
 	$(yaml2json) < $< > $@~
@@ -37,14 +37,8 @@ composer.json: composer.yaml
 	git add $@
 
 test:
-	$(phpunit) --verbose test
+	$(phpcs) --warning-severity=0 --standard=PSR2 src
+	$(phpunit) --verbose tests >phpunit.out
 
-archive: | clean composer.json
-	$(composer) archive
+.PHONY: all info documentation clean test
 
-release:
-	git push --all
-	git tag -m "Release version $V" -s v$V
-	git push --tags
-
-.PHONY: all info documentation clean test archive release

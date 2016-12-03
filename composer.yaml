@@ -1,7 +1,6 @@
 ---
 type: library
 name: zurborg/log-radis
-version: 1.1.0
 
 description: Radis Logging Engine for PHP
 homepage: https://github.com/zurborg/liblog-radis-php
@@ -23,11 +22,12 @@ require:
   ext-redis: '*'
 
 require-dev:
-  phpunit/phpunit: '5.3.*'
-  evert/phpdoc-md: '~0.2.0'
-  phpdocumentor/phpdocumentor: '2.*'
+  phpunit/phpunit: '~5'
+  evert/phpdoc-md: '~0'
+  phpdocumentor/phpdocumentor: '~2'
+  squizlabs/php_codesniffer: '~2'
 
-minimum-stability: dev
+minimum-stability: stable
 
 autoload:
   psr-4:

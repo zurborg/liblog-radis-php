@@ -1,7 +1,6 @@
 .*
 *~
-!.gitignore
-/composer.phar
-/composer.lock
-/phpunit.phar
-/vendor/
+*.out
+composer.phar
+composer.lock
+vendor

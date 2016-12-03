@@ -1,7 +1,7 @@
 language: php
 
 php:
-  - '7.0'
+  - 7.0
 
 before_install:
   - phpenv config-add travis-php.ini
@@ -10,4 +10,5 @@ install:
   - composer --prefer-dist install
 
 script:
-  - vendor/phpunit/phpunit/phpunit --colors=auto test
+  - ./phpcs --warning-severity=0 --standard=PSR2 src
+  - ./phpunit tests
