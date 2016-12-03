@@ -2,10 +2,11 @@
 
 /**
  * Radis logger for PHP
+ *
  * @copyright 2016 David Zurborg
- * @author David Zurborg <zurborg@cpan.org>
- * @link https://github.com/zurborg/liblog-radis-php
- * @license https://opensource.org/licenses/ISC The ISC License
+ * @author    David Zurborg <zurborg@cpan.org>
+ * @link      https://github.com/zurborg/liblog-radis-php
+ * @license   https://opensource.org/licenses/ISC The ISC License
  */
 
 namespace Log;
@@ -96,20 +97,25 @@ class Radis extends \Psr\Log\AbstractLogger
      * // Connect with default values
      * $radis = new \Log\Radis('localhost:6379', 'graylog-radis');
      * ```
-     * 
-     * @see \Redis::pconnect()
+     *
+     * @see   \Redis::pconnect()
      * @param string $server Name of the Redis server, in format *hostname*:*port*
-     * @param string $queue Name of the queue
-     * @param Redis $redis Instance of Redis, for internal use only
+     * @param string $queue  Name of the queue
+     * @param Redis  $redis  Instance of Redis, for internal use only
      */
     public function __construct($server = 'localhost:6379', $queue = 'graylog-radis', $redis = null)
     {
-        if (is_null($redis))
+        if (is_null($redis)) {
             $redis = new \Redis();
+        }
 
         list($host, $port) = explode(':', $server, 2);
-        if (!$host) $host = 'localhost';
-        if (!$port) $port = 6379;
+        if (!$host) {
+            $host = 'localhost';
+        }
+        if (!$port) {
+            $port = 6379;
+        }
         if (!$redis->pconnect($host, $port)) {
             throw new \Exception("Cannot connect to $host:$port");
         }
@@ -121,6 +127,7 @@ class Radis extends \Psr\Log\AbstractLogger
 
     /**
      * Set queue name
+     *
      * @param string $queue
      */
     public function setQueue($queue)
@@ -132,7 +139,7 @@ class Radis extends \Psr\Log\AbstractLogger
      * Set default value, if `$key` is present in `$context`
      *
      * @param string $key
-     * @param mixed $val May be also a callable function
+     * @param mixed  $val May be also a callable function
      */
     public function setDefault($key, $val)
     {
@@ -143,8 +150,8 @@ class Radis extends \Psr\Log\AbstractLogger
      * Fork object with another queue name
      *
      * Simply creates a new instance of ourselves, with the same server name, but with a different queue name.
-     * 
-     * @param string $queue
+     *
+     * @param  string $queue
      * @return \Log\Radis
      */
     public function fork($queue)
@@ -153,68 +160,78 @@ class Radis extends \Psr\Log\AbstractLogger
     }
 
     /**
-     * @param mixed[] &$array
-     * @param string $key
+     * @param mixed[]    &$array
+     * @param string     $key
      * @param mixed|null $value
      */
-    static private function setIf(array &$array, $key, $value)
+    private static function setIf(array &$array, $key, $value)
     {
-        if (array_key_exists($key, $array) and isset($array[$key]))
+        if (array_key_exists($key, $array) and isset($array[$key])) {
             return;
+        }
 
-        if (is_callable($value))
+        if (is_callable($value)) {
             $value = $value();
+        }
 
-        if (is_null($value))
+        if (is_null($value)) {
             return;
+        }
 
-        if (is_string($value) and !strlen($value))
+        if (is_string($value) and !strlen($value)) {
             return;
+        }
 
         $array[$key] = $value;
     }
 
     /**
-     * @param string $key
+     * @param string     $key
      * @param mixed|null $default
      * @return mixed|null
      */
-    static private function getServerVar($key, $default = null)
+    private static function getServerVar($key, $default = null)
     {
         return array_key_exists($key, $_SERVER) ? $_SERVER[$key] : $default;
     }
 
     /**
      * @param mixed[] $input
-     * @param string $prefix
+     * @param string  $prefix
      * @return mixed[]
      */
-    static private function flatten(array $input, $prefix = '')
+    private static function flatten(array $input, $prefix = '')
     {
         $output = [];
 
-        foreach ($input as $key => $val)
-        {
-            if (is_callable($val))
+        foreach ($input as $key => $val) {
+            if (is_callable($val)) {
                 $val = $val();
+            }
 
-            if (is_null($val))
-                continue;
-
-            if (is_array($val))
-            {
-                $temp = self::flatten($val, $prefix.$key.'_');
-                $output = array_merge($output, $temp);
+            if (is_null($val)) {
                 continue;
             }
 
-            if (is_string($val) and !strlen($val))
+            if (is_array($val)) {
+                $val = self::flatten($val, $prefix.$key.'_');
+                $output = array_merge($output, $val);
                 continue;
+            }
+
+            if (!is_string($val)) {
+                $val = "$val";
+            }
+
+            if (!strlen($val)) {
+                continue;
+            }
 
             $key = strtolower($prefix.$key);
 
-            if (substr($key, 0, 1) !== '_')
+            if (substr($key, 0, 1) !== '_') {
                 $key = "_$key";
+            }
 
             $output[$key] = $val;
         }
@@ -224,8 +241,8 @@ class Radis extends \Psr\Log\AbstractLogger
 
     /**
      * @param int|string $level
-     * @param string $message
-     * @param mixed[] $context
+     * @param string     $message
+     * @param mixed[]    $context
      * @return mixed[]
      */
     protected function prepare($level, $message, array $context)
@@ -233,13 +250,14 @@ class Radis extends \Psr\Log\AbstractLogger
         $now = microtime(true);
         $offset = $now - self::getServerVar('REQUEST_TIME_FLOAT');
 
-        if (is_null($level))
+        if (is_null($level)) {
             $level = $this->defaultLevel;
+        }
 
-        if (!is_int($level))
-        {
-            if (!array_key_exists($level, $this->levels))
+        if (!is_int($level)) {
+            if (!array_key_exists($level, $this->levels)) {
                 $level = $this->defaultLevel;
+            }
 
             $level = $this->levels[$level];
         }
@@ -248,37 +266,39 @@ class Radis extends \Psr\Log\AbstractLogger
 
         $extras = self::flatten($context);
 
-        self::setIf($extras, '_time_offset',     sprintf('%0.06f', $offset));
-        self::setIf($extras, '_php_script',      self::getServerVar('SCRIPT_FILENAME'));
-        self::setIf($extras, '_http_query',      self::getServerVar('QUERY_STRING'));
-        self::setIf($extras, '_http_path',       self::getServerVar('PATH_INFO'));
-        self::setIf($extras, '_http_addr',       self::getServerVar('SERVER_ADDR'));
-        self::setIf($extras, '_http_vhost',      self::getServerVar('SERVER_NAME'));
-        self::setIf($extras, '_http_proto',      self::getServerVar('SERVER_PROTOCOL'));
-        self::setIf($extras, '_http_method',     self::getServerVar('REQUEST_METHOD'));
-        self::setIf($extras, '_http_uri',        self::getServerVar('REQUEST_URI'));
-        self::setIf($extras, '_http_referer',    self::getServerVar('HTTP_REFERER'));
-        self::setIf($extras, '_http_host',       self::getServerVar('HTTP_HOST'));
-        self::setIf($extras, '_http_useragent',  self::getServerVar('HTTP_USER_AGENT'));
+        self::setIf($extras, '_time_offset', sprintf('%0.06f', $offset));
+        self::setIf($extras, '_php_script', self::getServerVar('SCRIPT_FILENAME'));
+        self::setIf($extras, '_http_query', self::getServerVar('QUERY_STRING'));
+        self::setIf($extras, '_http_path', self::getServerVar('PATH_INFO'));
+        self::setIf($extras, '_http_addr', self::getServerVar('SERVER_ADDR'));
+        self::setIf($extras, '_http_vhost', self::getServerVar('SERVER_NAME'));
+        self::setIf($extras, '_http_proto', self::getServerVar('SERVER_PROTOCOL'));
+        self::setIf($extras, '_http_method', self::getServerVar('REQUEST_METHOD'));
+        self::setIf($extras, '_http_uri', self::getServerVar('REQUEST_URI'));
+        self::setIf($extras, '_http_referer', self::getServerVar('HTTP_REFERER'));
+        self::setIf($extras, '_http_host', self::getServerVar('HTTP_HOST'));
+        self::setIf($extras, '_http_useragent', self::getServerVar('HTTP_USER_AGENT'));
         self::setIf($extras, '_http_connection', self::getServerVar('HTTP_CONNECTION'));
-        self::setIf($extras, '_http_user',       self::getServerVar('REMOTE_USER'));
-        self::setIf($extras, '_client_addr',     self::getServerVar('REMOTE_ADDR'));
-        self::setIf($extras, '_client_port',     self::getServerVar('REMOTE_PORT'));
-        self::setIf($extras, '_session_id',      session_id());
+        self::setIf($extras, '_http_user', self::getServerVar('REMOTE_USER'));
+        self::setIf($extras, '_client_addr', self::getServerVar('REMOTE_ADDR'));
+        self::setIf($extras, '_client_port', self::getServerVar('REMOTE_PORT'));
+        self::setIf($extras, '_session_id', session_id());
 
-        if (strstr($message, "\n"))
-        {
+        if (strstr($message, "\n")) {
             list($short_message, $long_message) = explode("\n", $message, 2);
             $extras['full_message'] = $long_message;
             $message = $short_message;
         }
 
-        $gelf = array_merge($extras, [
+        $gelf = array_merge(
+            $extras,
+            [
             'host' => $this->hostname,
             'timestamp' => sprintf('%0.06f', $now),
             'message' => $message,
             'level' => $level,
-        ]);
+            ]
+        );
         
         return $gelf;
     }
@@ -294,7 +314,7 @@ class Radis extends \Psr\Log\AbstractLogger
      * $radis->setDefault('timestamp', function() { return time(); });
      * $radis->log(...);
      * ```
-     * 
+     *
      * The whole array of `$context` will be flattened, the subarrays are merged and the names of subkeys are concatenated together with an underscore.
      *
      * These keywords are set by default, when not present:
@@ -323,11 +343,11 @@ class Radis extends \Psr\Log\AbstractLogger
      * | _client_port     | `$_SERVER['REMOTE_PORT']` |
      * | _session_id      | `session_id();` |
      *
-     * and they will be only filled if the corresponding variables are available. In a CLI application, only `SCRIPT_FILENAME` is present, for example. 
+     * and they will be only filled if the corresponding variables are available. In a CLI application, only `SCRIPT_FILENAME` is present, for example.
      *
-     * @param string $level The severity level of log you are making.
-     * @param string $message The message you want to log.
-     * @param array $context Additional information about the logged message
+     * @param  string $level   The severity level of log you are making.
+     * @param  string $message The message you want to log.
+     * @param  array  $context Additional information about the logged message
      * @return bool success of push.
      */
     public function log($level, $message, array $context = [])
@@ -340,6 +360,4 @@ class Radis extends \Psr\Log\AbstractLogger
 
         return !($result === false);
     }
-
 }
-
